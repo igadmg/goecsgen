@@ -1,0 +1,12 @@
+deedles.dev/xiter v0.2.1 h1:yyyfo1sDwARp5lyMvILBJpEI28sIFN0TNYagAdBUa+s=
+deedles.dev/xiter v0.2.1/go.mod h1:59997UHUsKAy/8bHUClTfeXdyuLZ6z/+yF++vIpxfx8=
+github.com/chewxy/math32 v1.11.1 h1:b7PGHlp8KjylDoU8RrcEsRuGZhJuz8haxnKfuMMRqy8=
+github.com/chewxy/math32 v1.11.1/go.mod h1:dOB2rcuFrCn6UHrze36WSLVPKtzPMRAQvBvUwkSsLqs=
+github.com/igadmg/gamemath v0.0.0-20250502152201-14a551f600ad h1:WIrUa7k6VrZusRVM57sMBVa7dikSIQQR3/PKqJyQE6o=
+github.com/igadmg/gamemath v0.0.0-20250502152201-14a551f600ad/go.mod h1:ht+Hnhqlek+UAzZiyf3zYNukFmfJHuAEOLKJrshPrQo=
+github.com/igadmg/goecs v0.0.0-20250503100802-ef527ce217f1 h1:/a44vG6/zDvLjc2xDJTCoG/Fy80thHYG/HVBoYt9ms8=
+github.com/igadmg/goecs v0.0.0-20250503100802-ef527ce217f1/go.mod h1:h2jR6mmIebe/2uQ3iq+1M4XqIiExm+I62rEKAKwx2pM=
+github.com/igadmg/goex v0.0.0-20250502115452-bd40b01ba4eb h1:Fu2lwvI20ZfrJN9uaR/zjQeN3VMU20hFuBLkRCgE0O8=
+github.com/igadmg/goex v0.0.0-20250502115452-bd40b01ba4eb/go.mod h1:oRtmQqRpH/fasU3HEeYAoWhDfM5oLz04zIvkqsQ75AU=
+golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0 h1:R84qjqJb5nVJMxqWYb3np9L5ZsaDtB+a39EqjV0JSUM=
+golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0/go.mod h1:S9Xr4PYopiDyqSyp5NjCrhFrqg6A5zA2E/iPHPhqnS8=
