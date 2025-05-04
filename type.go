@@ -160,7 +160,7 @@ func (t *Type) New() *Type {
 		return !xiter.IsEmpty(xiter.Filter(
 			slices.Values(t.Fields),
 			func(f core.FieldI) bool {
-				return f.GetName() == "SaveTag"
+				return f.GetTypeName() == "SaveTag"
 			},
 		))
 	})
