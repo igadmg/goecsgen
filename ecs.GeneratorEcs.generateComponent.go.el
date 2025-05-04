@@ -7,6 +7,8 @@ import (
 )
 
 func (g *GeneratorEcs) generateComponent(wr io.Writer, e *Type) {
+	g.genDto(wr, e)
+
 	g.fnComponentStore(wr, e)
 	g.fnComponentRestore(wr, e)
 }

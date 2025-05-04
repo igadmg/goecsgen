@@ -1,0 +1,38 @@
+<?go
+package goecsgen
+
+import (
+	"fmt"
+	"io"
+)
+
+func (g *GeneratorEcs) genDto(wr io.Writer, t *Type) {
+	if !t.NeedDto() {
+		return
+	}
+?>
+
+type <?= t.Name ?>Dto struct {
+<?
+	for f := range t.DtoComponentsSeq() {
+?>
+	<?= f.GetName() ?> <?= f.GetTypeName() ?>
+<?
+	}
+?>
+}
+
+func (c <?= t.Name ?>) Dto() <?= t.Name ?>Dto {
+	return <?= t.Name ?>Dto{
+<?
+	for f := range t.DtoComponentsSeq() {
+?>
+		<?= f.GetName() ?>: c.<?= f.GetName() ?>,
+<?
+	}
+?>
+	}
+}
+<?
+}
+?>

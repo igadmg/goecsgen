@@ -38,6 +38,7 @@ type EcsTypeI interface {
 	HasSave() bool
 
 	NeedAs() bool
+	NeedDto() bool
 
 	StructComponentsSeq() iter.Seq[EcsFieldI]
 	QueryComponentsSeq() iter.Seq[EcsFieldI]
@@ -61,6 +62,7 @@ type Type struct {
 	needStore        *lazy.Of[bool]
 	needSave         *lazy.Of[bool]
 	needAs           *lazy.Of[bool]
+	needDto          *lazy.Of[bool]
 	HaveBaseEntity   bool `yaml:""`
 }
 
@@ -110,6 +112,10 @@ func (t Type) HasSave() bool {
 
 func (t Type) NeedAs() bool {
 	return t.needAs.Value()
+}
+
+func (t Type) NeedDto() bool {
+	return t.needDto.Value()
 }
 
 func MakeType(pkg *core.Package) Type {
@@ -167,6 +173,10 @@ func (t *Type) New() *Type {
 
 	t.needAs = lazy.New(func() bool {
 		return !xiter.IsEmpty(t.AsComponentsSeq())
+	})
+
+	t.needDto = lazy.New(func() bool {
+		return !xiter.IsEmpty(t.DtoComponentsSeq())
 	})
 
 	return t
@@ -397,6 +407,20 @@ func (t *Type) StoreComponentsSeq() iter.Seq[EcsFieldI] {
 	}
 }
 
+func (t *Type) SaveComponentsSeq() iter.Seq[EcsFieldI] {
+	return func(yield func(EcsFieldI) bool) {
+		for field := range EnumFieldsSeq(t.StructComponentsSeq()) {
+			if !field.Tag.HasField(Tag_Save) {
+				continue
+			}
+
+			if !yield(field) {
+				return
+			}
+		}
+	}
+}
+
 func (t *Type) AsComponentsSeq() iter.Seq[EcsFieldI] {
 	return func(yield func(EcsFieldI) bool) {
 		for field := range EnumFieldsSeq(t.StructComponentsSeq()) {
@@ -411,10 +435,10 @@ func (t *Type) AsComponentsSeq() iter.Seq[EcsFieldI] {
 	}
 }
 
-func (t *Type) SaveComponentsSeq() iter.Seq[EcsFieldI] {
+func (t *Type) DtoComponentsSeq() iter.Seq[EcsFieldI] {
 	return func(yield func(EcsFieldI) bool) {
 		for field := range EnumFieldsSeq(t.StructComponentsSeq()) {
-			if !field.Tag.HasField(Tag_Save) {
+			if !field.Tag.HasField(Tag_Dto) {
 				continue
 			}
 

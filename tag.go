@@ -21,10 +21,12 @@ const (
 	Tag_Virtual  = "virtual"  // field is virtual - it does have it's own storage and can be overrided by subarchetypes
 
 	Tag_A    = "a"    // that component in exported in get and set functions
+	Tag_Dto  = "dto"  // that component in dto generated object
 	Tag_Save = "save" // save that component in Save function
 
 	// Query and Archetype
 	Tag_Cached = "cached" // queries or archetypes marked as cached get *Cached structs generated
+	Tag_Static = "static" //
 
 	// Component tags
 	Tag_Reference = "reference" // fields marked as reference are not calling Prepare, Defer, Store/Restore methods but are saved

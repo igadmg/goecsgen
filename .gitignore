@@ -34,6 +34,7 @@ config.yaml
 
 
 ecs.GeneratorEcs.genAs.go
+ecs.GeneratorEcs.genDto.go
 ecs.GeneratorEcs.generateArchetype.go
 ecs.GeneratorEcs.generateComponent.go
 ecs.GeneratorEcs.generateDebug.go

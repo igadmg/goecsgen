@@ -151,6 +151,70 @@ func (r *<?= q.Name ?>Cache) Query() bool {
 }
 <?
 		}
+
+		if qt, ok := q.Tag.GetObject(Tag_Query); ok && qt.HasField(Tag_Static) {
+?>
+
+type _<?= q.Name ?>StaticType struct {
+	Age func() (age uint64)
+	Get func(id ecs.Id) (<?= q.Name ?>, bool)
+	Do  func() iter.Seq[<?= q.Name ?>]
+}
+
+var <?= q.Name ?>StaticType _<?= q.Name ?>StaticType
+
+func _<?= q.Name ?>Static_register() {
+	<?= q.Name ?>StaticType.Age = age<?= q.Name ?>
+	<?= q.Name ?>StaticType.Get = get<?= q.Name ?>
+	<?= q.Name ?>StaticType.Do = do<?= q.Name ?>Static
+}
+
+func do<?= type_name ?>Static() iter.Seq[<?= local_name ?>] {
+	return func(yield func(<?= local_name ?>) bool) {
+<?
+	for _, e := range qsi.Archs {
+		if e.GetPackage() == g.Pkg {
+?>
+	{
+		s := &S_<?= e.Name ?>
+<?
+		} else if g.Pkg.Above(e.GetPackage()) {
+?>
+	{
+		s := &<?= e.GetPackage().Name ?>.S_<?= e.Name ?>
+<?
+		} else {
+			continue
+		}
+?>
+	for id := range s.EntityIds() {
+		index := (int)(id.GetId() - 1)
+		_ = index
+		if !yield(<?= local_name ?>{
+			Id:       id,
+<?
+		for iq := range EnumFieldsSeq(q.StructComponentsSeq()) {
+			if ft := iq.Type; ft != nil && ft.IsZero() {
+				continue
+			}
+?>
+			<?= iq.Name ?>: <?= iq.Access ?>s.S_<?= iq.Name ?>[index],
+<?
+		}
+?>
+		}) {
+			return
+		}
+		break
+	}
+}
+<?
+	}
+?>
+	}
+}
+<?
+		}
 	}
 }
 ?>

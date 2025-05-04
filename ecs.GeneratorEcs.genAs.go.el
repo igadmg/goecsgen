@@ -7,6 +7,10 @@ import (
 )
 
 func (g *GeneratorEcs) genAs(wr io.Writer, t *Type) {
+	//if !t.NeedAs() {
+	//	return
+	//}
+
 	for f := range EnumFields(t.Fields) {
 		if fet, ok := f.GetType().(EcsTypeI); ok {
 			for af := range fet.AsComponentsSeq() {
