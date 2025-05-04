@@ -94,6 +94,9 @@ func (e <?= eName ?>) Allocate() ecs.Ref[<?= eName ?>] {
 
 	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
 		if ct, ok := CastType(c.Type); ok {
+			if ct.IsZero() {
+				continue
+			}
 			if ct.IsTransient() {
 				continue
 			}
@@ -225,6 +228,10 @@ func (e <?= eName ?>) Load(age uint64, id ecs.Id) (uint64, <?= eName ?>) {
 			e.Id = id
 <?
 			for field := range EnumFields(e.Fields) {
+				if ft := field.Type; ft != nil && ft.IsZero() {
+					continue
+				}
+
 				if field.Tag.HasField(Tag_Virtual) || field.Tag.HasField(Tag_Abstract) {
 ?>
 			e.<?= field.Name ?> = &s.S_<?= field.Name ?>[index].<?= field.GetTypeName() ?>
@@ -255,6 +262,9 @@ func (e <?= eName ?>) Load(age uint64, id ecs.Id) (uint64, <?= eName ?>) {
 			e.Id = id
 <?
 	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
+		if ft := c.Type; ft != nil && ft.IsZero() {
+			continue
+		}
 ?>
 			e.<?= c.Name ?> = &s.S_<?= c.Name ?>[index]
 <?
@@ -288,18 +298,22 @@ func (g *GeneratorEcs) fnStore(wr io.Writer, typ *Type) {
 func (e *<?= typName ?>) Store() {
 <?
 	for field := range EnumFieldsSeq(typ.StoreComponentsSeq()) {
+		if ft := field.Type; ft != nil && ft.IsZero() {
+			continue
+		}
+
 		if field.IsArray() {
+		} else {
+			if field.isEcsRef {
 			} else {
-				if field.isEcsRef {
-				} else {
 ?>
 	c_<?= field.Name ?> := *e.<?= field.Name ?>
 	e.<?= field.Name ?> = &c_<?= field.Name ?>
 <?
-				}
 			}
+		}
 
-			g.genFieldEcsCall(wr, field, "Store")
+		g.genFieldEcsCall(wr, field, "Store")
 	}
 ?>
 	Update<?= typName ?>Id(e.Id.Store())

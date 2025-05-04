@@ -102,12 +102,7 @@ func (t Type) NeedAs() bool {
 
 func MakeType(pkg *core.Package) Type {
 	return Type{
-		Type: core.Type{
-			Token: core.Token{
-				Package: pkg,
-			},
-			Funcs: map[string]core.FuncI{},
-		},
+		Type: core.MakeType(pkg),
 	}
 }
 

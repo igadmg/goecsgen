@@ -2,9 +2,12 @@ package goecsgen
 
 import (
 	"bytes"
+	"fmt"
 	"go/ast"
-	"io"
 	"iter"
+	"log"
+	"net/rpc"
+	"os"
 	"slices"
 
 	"deedles.dev/xiter"
@@ -36,6 +39,88 @@ func (g *GeneratorEcs) MarshalYAML() (interface{}, error) {
 		"features":   g.features,
 		"systems":    g.systems,
 	}, nil
+}
+
+type ArgParam struct {
+	Value int
+	Name  string
+}
+
+type ArgType struct {
+	FileName  string
+	Data      []int
+	Params    []ArgParam
+	Component *core.TokenDto
+	//Entities   map[string]*Type
+	//Queries    map[string]*Type
+	//Features   map[string]*Type
+	//Systems    map[string]*Type
+}
+
+type ReplyType struct {
+}
+
+func (s GeneratorEcs) Marshal(args *ArgType, reply *ReplyType) error {
+	log.Printf("Получили запрос на маршализацию " + args.FileName)
+	return nil
+}
+
+func (s *GeneratorEcs) Yaml(fileName string) {
+	// Подключаемся к RPC-серверу
+	client, err := rpc.Dial("tcp", "localhost:1234")
+	if err != nil {
+		fmt.Println("Ошибка при подключении к серверу:", err)
+		os.Exit(1)
+	}
+	defer client.Close()
+
+	//testType := core.NewType(&core.Package{Name: "test"})
+	//testType.Name = "TestType"
+	// Синхронный вызов Multiply
+	args := &ArgType{
+		FileName: fileName,
+		Data:     []int{1, 2, 3, 4, 5},
+		Params: []ArgParam{
+			{
+				Value: 13,
+				Name:  "thiriteen",
+			},
+			{
+				Value: 40,
+				Name:  "manymany",
+			},
+		},
+		Component: &core.TokenDto{
+			Name:    "TestToken",
+			Package: "test",
+			Tag: core.TagData{
+				"component": nil,
+			},
+		},
+		//	Components: s.components,
+		//	Entities:   s.entities,
+		//	Queries:    s.queries,
+		//	Features:   s.features,
+		//	Systems:    s.systems,
+	}
+	var reply ReplyType
+	multiplyCall := client.Go("GeneratorEcs.Marshal", args, &reply, nil)
+	<-multiplyCall.Done // Ждем завершения вызова
+	if multiplyCall.Error != nil {
+		fmt.Println("Ошибка при асинхронном вызове Arith.Multiply:", multiplyCall.Error)
+	}
+
+	multiplyCall = client.Go("GeneratorEcs.Marshal", args, &reply, nil)
+	<-multiplyCall.Done // Ждем завершения вызова
+	if multiplyCall.Error != nil {
+		fmt.Println("Ошибка при асинхронном вызове Arith.Multiply:", multiplyCall.Error)
+	}
+
+	multiplyCall = client.Go("GeneratorEcs.Marshal", args, &reply, nil)
+	<-multiplyCall.Done // Ждем завершения вызова
+	if multiplyCall.Error != nil {
+		fmt.Println("Ошибка при асинхронном вызове Arith.Multiply:", multiplyCall.Error)
+	}
 }
 
 func NewGeneratorEcs() core.Generator {
@@ -241,10 +326,6 @@ func (g ecsNode) Attributes() (attrs []encoding.Attribute) {
 	}
 
 	return
-}
-
-func (g *GeneratorEcs) Yaml(w io.Writer) error {
-	return nil
 }
 
 func (g *GeneratorEcs) Graph() graph.Graph {

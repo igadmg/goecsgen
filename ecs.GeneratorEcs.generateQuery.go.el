@@ -50,6 +50,8 @@ func get<?= type_name ?>(id ecs.Id) (<?= local_name ?>, bool) {
 <?
 	for  _, e := range qsi.Archs {
 		if e.GetPackage() == g.Pkg {
+	// if s := &S_PlayerEntity; s.TypeId() == t {
+	// if s := &gfx.S_PlayerEntity; s.TypeId() == t {
 ?>
 	if s := &S_<?= e.Name ?>; s.TypeId() == t {
 <?
@@ -65,6 +67,9 @@ func get<?= type_name ?>(id ecs.Id) (<?= local_name ?>, bool) {
 			Id:      id,
 <?
 		for iq := range EnumFieldsSeq(q.StructComponentsSeq()) {
+			if ft := iq.Type; ft != nil && ft.IsZero() {
+				continue
+			}
 ?>
 			<?= iq.Name ?>: &s.S_<?= iq.Name ?>[index],
 <?
@@ -82,7 +87,7 @@ func get<?= type_name ?>(id ecs.Id) (<?= local_name ?>, bool) {
 func do<?= type_name ?>() iter.Seq[<?= local_name ?>] {
 	return func(yield func(<?= local_name ?>) bool) {
 <?
-	for  _, e := range qsi.Archs {
+	for _, e := range qsi.Archs {
 		if e.GetPackage() == g.Pkg {
 ?>
 	{
@@ -104,8 +109,11 @@ func do<?= type_name ?>() iter.Seq[<?= local_name ?>] {
 			Id:       id,
 <?
 		for iq := range EnumFieldsSeq(q.StructComponentsSeq()) {
+			if ft := iq.Type; ft != nil && ft.IsZero() {
+				continue
+			}
 ?>
-			<?= iq.Name ?>: &s.S_<?= iq.Name ?>[index],
+			<?= iq.Name ?>: <?= iq.Access ?>s.S_<?= iq.Name ?>[index],
 <?
 		}
 ?>

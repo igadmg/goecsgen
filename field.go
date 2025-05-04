@@ -22,6 +22,7 @@ type Field struct {
 	core.Field
 
 	isEcsRef bool
+	Access   string
 }
 
 func (f Field) GetEcsType() EcsTypeI {
@@ -89,6 +90,7 @@ func (f Field) IsReference() bool {
 }
 
 func (f *Field) Prepare(tf core.TypeFactory) error {
+	f.Access = "&"
 	err := f.Field.Prepare(tf)
 	if err != nil {
 		f.isEcsRef = strings.HasPrefix(f.TypeName, "ecs.Ref[")
