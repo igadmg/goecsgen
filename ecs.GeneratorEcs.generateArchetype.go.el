@@ -156,6 +156,34 @@ func Update<?= eName ?>Id(id ecs.Id) {
 	}
 }
 <?
+
+	if e.NeedSave() {
+?>
+
+func (s storage_<?= eName ?>) Save(w *gob.Encoder) error {
+<?
+	for c := range e.SaveComponentsSeq() {
+?>
+	{
+		err := w.Encode(slices.Collect(
+			xiter.Map(
+				s.EntityIds(),
+				func(id ecs.Id) <?= g.LocalTypeName(c.GetType()) ?>Dto { return s.S_<?= c.GetName() ?>[id.GetIndex()].Dto() },
+			)))
+		if err != nil {
+			return err
+		}
+	}
+<?
+	}
+?>
+	return nil
+}
+
+<?
+	}
+
+
 	if _, ok := g.queries[eName+"Query"]; !ok {
 ?>
 

@@ -61,7 +61,7 @@ type ReplyType struct {
 }
 
 func (s GeneratorEcs) Marshal(args *ArgType, reply *ReplyType) error {
-	log.Printf("Получили запрос на маршализацию " + args.FileName)
+	log.Print("Получили запрос на маршализацию " + args.FileName)
 	return nil
 }
 

@@ -34,7 +34,7 @@ func (f Field) IsEcsRef() bool {
 }
 
 func (f Field) GetA() string {
-	a, _ := f.Tag.GetField("a")
+	a, _ := f.Tag.GetField(Tag_A)
 	if a == "" {
 		a = f.Name
 		if len(a) > 0 {

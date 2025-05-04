@@ -34,6 +34,8 @@ type EcsTypeI interface {
 	HasStore() bool
 	NeedRestore() bool
 	HasRestore() bool
+	NeedSave() bool
+	HasSave() bool
 
 	NeedAs() bool
 
@@ -41,6 +43,7 @@ type EcsTypeI interface {
 	QueryComponentsSeq() iter.Seq[EcsFieldI]
 	ComponentsSeq() iter.Seq[EcsFieldI]
 	AsComponentsSeq() iter.Seq[EcsFieldI]
+	SaveComponentsSeq() iter.Seq[EcsFieldI]
 
 	ReversedStructComponentsSeq() iter.Seq[EcsFieldI]
 	ReversedQueryComponentsSeq() iter.Seq[EcsFieldI]
@@ -56,6 +59,7 @@ type Type struct {
 	StructComponents *lazy.Of[[]EcsFieldI]
 	QueryComponents  *lazy.Of[[]EcsFieldI]
 	needStore        *lazy.Of[bool]
+	needSave         *lazy.Of[bool]
 	needAs           *lazy.Of[bool]
 	HaveBaseEntity   bool `yaml:""`
 }
@@ -94,6 +98,14 @@ func (t Type) NeedRestore() bool {
 
 func (t Type) HasRestore() bool {
 	return !t.IsTransient() && (t.HasFunction("Restore") || t.NeedRestore())
+}
+
+func (t Type) NeedSave() bool {
+	return t.needSave.Value()
+}
+
+func (t Type) HasSave() bool {
+	return false
 }
 
 func (t Type) NeedAs() bool {
@@ -142,6 +154,15 @@ func (t *Type) New() *Type {
 
 	t.needStore = lazy.New(func() bool {
 		return !xiter.IsEmpty(t.StoreComponentsSeq())
+	})
+
+	t.needSave = lazy.New(func() bool {
+		return !xiter.IsEmpty(xiter.Filter(
+			slices.Values(t.Fields),
+			func(f core.FieldI) bool {
+				return f.GetName() == "SaveTag"
+			},
+		))
 	})
 
 	t.needAs = lazy.New(func() bool {
@@ -379,7 +400,21 @@ func (t *Type) StoreComponentsSeq() iter.Seq[EcsFieldI] {
 func (t *Type) AsComponentsSeq() iter.Seq[EcsFieldI] {
 	return func(yield func(EcsFieldI) bool) {
 		for field := range EnumFieldsSeq(t.StructComponentsSeq()) {
-			if !field.Tag.HasField("a") {
+			if !field.Tag.HasField(Tag_A) {
+				continue
+			}
+
+			if !yield(field) {
+				return
+			}
+		}
+	}
+}
+
+func (t *Type) SaveComponentsSeq() iter.Seq[EcsFieldI] {
+	return func(yield func(EcsFieldI) bool) {
+		for field := range EnumFieldsSeq(t.StructComponentsSeq()) {
+			if !field.Tag.HasField(Tag_Save) {
 				continue
 			}
 

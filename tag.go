@@ -20,6 +20,9 @@ const (
 	Tag_Abstract = "abstract" // field is abstract - it does not have it's own storage but can be overrided by subarchetypes
 	Tag_Virtual  = "virtual"  // field is virtual - it does have it's own storage and can be overrided by subarchetypes
 
+	Tag_A    = "a"    // that component in exported in get and set functions
+	Tag_Save = "save" // save that component in Save function
+
 	// Query and Archetype
 	Tag_Cached = "cached" // queries or archetypes marked as cached get *Cached structs generated
 
