@@ -129,30 +129,7 @@ func do<?= type_name ?>() iter.Seq[<?= local_name ?>] {
 }
 <?
 
-	if q.Package == g.Pkg {
-		if qt, ok := q.Tag.GetObject(Tag_Query); ok && qt.HasField(Tag_Cached) {
-?>
-
-type <?= q.Name ?>Cache struct {
-	Age    uint64
-	Cache []<?= q.Name ?>
-}
-
-func (r *<?= q.Name ?>Cache) Query() bool {
-	q_age := <?= q.Name ?>Type.Age()
-	if r.Age != q_age {
-		r.Age = q_age
-		r.Cache = slices.Collect(<?= q.Name ?>Type.Do())
-
-		return true
-	}
-
-	return false
-}
-<?
-		}
-
-		if qt, ok := q.Tag.GetObject(Tag_Query); ok && qt.HasField(Tag_Static) {
+	if qt, ok := q.Tag.GetObject(Tag_Query); ok && qt.HasField(Tag_Static) {
 ?>
 
 type _<?= q.Name ?>StaticType struct {
@@ -163,10 +140,10 @@ type _<?= q.Name ?>StaticType struct {
 
 var <?= q.Name ?>StaticType _<?= q.Name ?>StaticType
 
-func _<?= q.Name ?>Static_register() {
-	<?= q.Name ?>StaticType.Age = age<?= q.Name ?>
-	<?= q.Name ?>StaticType.Get = get<?= q.Name ?>
-	<?= q.Name ?>StaticType.Do = do<?= q.Name ?>Static
+func _<?= local_name ?>Static_register() {
+	<?= local_name ?>StaticType.Age = age<?= local_name ?>
+	<?= local_name ?>StaticType.Get = get<?= local_name ?>
+	<?= local_name ?>StaticType.Do = do<?= local_name ?>Static
 }
 
 func do<?= type_name ?>Static() iter.Seq[<?= local_name ?>] {
@@ -200,7 +177,7 @@ func do<?= type_name ?>Static() iter.Seq[<?= local_name ?>] {
 ?>
 			<?= iq.Name ?>: <?= iq.Access ?>s.S_<?= iq.Name ?>[index],
 <?
-		}
+			}
 ?>
 		}) {
 			return
@@ -209,9 +186,33 @@ func do<?= type_name ?>Static() iter.Seq[<?= local_name ?>] {
 	}
 }
 <?
-	}
+		}
 ?>
 	}
+}
+<?
+	}
+
+
+	if q.Package == g.Pkg {
+		if qt, ok := q.Tag.GetObject(Tag_Query); ok && qt.HasField(Tag_Cached) {
+?>
+
+type <?= q.Name ?>Cache struct {
+	Age    uint64
+	Cache []<?= q.Name ?>
+}
+
+func (r *<?= q.Name ?>Cache) Query() bool {
+	q_age := <?= q.Name ?>Type.Age()
+	if r.Age != q_age {
+		r.Age = q_age
+		r.Cache = slices.Collect(<?= q.Name ?>Type.Do())
+
+		return true
+	}
+
+	return false
 }
 <?
 		}
