@@ -32,6 +32,10 @@ var S_<?= eName ?> = storage_<?= eName ?>{
 	BaseStorage: ecs.MakeBaseStorage(<?= id  ?>),
 }
 
+func Pack<?= eName ?>(id ecs.Id) ecs.Id {
+	return S_<?= eName ?>.Repack(id)
+}
+
 func Match<?= eName ?>(id ecs.Id) (ecs.Ref[<?= eName ?>], bool) {
 	if id.GetType() == S_<?= eName ?>.TypeId() {
 		ref := ecs.Ref[<?= eName ?>]{Id: id}

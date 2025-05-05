@@ -11,6 +11,31 @@ func (g *GeneratorEcs) generateComponent(wr io.Writer, e *Type) {
 
 	g.fnComponentStore(wr, e)
 	g.fnComponentRestore(wr, e)
+
+?>
+
+func (c *<?= e.Name ?>) Pack() {
+<?
+	for field := range EnumFieldsSeq(e.ComponentsSeq()) {
+		if field.isEcsRef {
+			ft := field.Type
+			ftpkg := g.TypeImportName(ft)
+			if field.IsArray() {
+?>
+	for i := range c.<?= field.Name ?> {
+		c.<?= field.Name ?>[i].Id = <?= ftpkg ?>Pack<?= ft.GetName() ?>(c.<?= field.Name ?>[i].Id)
+	}
+<?
+			} else {
+?>
+	c.<?= field.Name ?>.Id = <?= ftpkg ?>Pack<?= ft.GetName() ?>(c.<?= field.Name ?>.Id)
+<?
+			}
+		}
+	}
+?>
+}
+<?
 }
 
 func (g *GeneratorEcs) fnComponentStore(wr io.Writer, typ *Type) {

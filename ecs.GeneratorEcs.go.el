@@ -152,6 +152,11 @@ func _Query_constraints(v bool) bool {
 ?>
 	_<?= name ?>_register()
 <?
+		if qt, ok := q.Query.Tag.GetObject(Tag_Query); ok && qt.HasField(Tag_Static) {
+?>
+	_<?= name ?>Static_register()
+<?
+		}
 	}
 ?>
 
