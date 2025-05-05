@@ -184,7 +184,7 @@ func (s storage_<?= eName ?>) Save(w *gob.Encoder) error {
 	return nil
 }
 
-func (s storage_<?= eName ?>) Load(w *gob.Decoder) error {
+func (s *storage_<?= eName ?>) Load(w *gob.Decoder) error {
 <?
 	for c := range e.SaveComponentsSeq() {
 ?>
@@ -195,11 +195,10 @@ func (s storage_<?= eName ?>) Load(w *gob.Decoder) error {
 			return err
 		}
 
-		s.S_<?= c.GetName() ?> = ecs.BaseStorageAppend(s.S_<?= c.GetName() ?>, slices.Collect(
-			xiter.Map(
-				slices.Values(dto),
-				func(dto <?= g.LocalTypeName(c.GetType()) ?>Dto) <?= g.LocalTypeName(c.GetType()) ?> { return <?= g.LocalTypeName(c.GetType()) ?>{}.FromDto(dto) },
-			)))
+		s.S_<?= c.GetName() ?> = ecs.BaseStorageReserve(s.S_<?= c.GetName() ?>, len(dto))
+		for i := range s.S_<?= c.GetName() ?> {
+			s.S_<?= c.GetName() ?>[i].FromDto(dto[i])
+		}
 	}
 <?
 	}
@@ -207,7 +206,7 @@ func (s storage_<?= eName ?>) Load(w *gob.Decoder) error {
 	return nil
 }
 
-func (s storage_<?= eName ?>) Pack() {
+func (s *storage_<?= eName ?>) Pack() {
 	shift := 0
 	for i, id := range s.Ids {
 		if !id.IsAllocated() {
@@ -216,9 +215,13 @@ func (s storage_<?= eName ?>) Pack() {
 			s.Ids[i-shift] = id
 <?
 	for c := range e.ComponentsSeq() {
+		if c.GetType().IsZero() {
+			continue
+		}
+
 ?>
-			s.S_<?= c.GetName() ?>[i-shift] = s.S_<?= c.GetName() ?>[i]
 			s.S_<?= c.GetName() ?>[i].Pack()
+			s.S_<?= c.GetName() ?>[i-shift] = s.S_<?= c.GetName() ?>[i]
 <?
 	}
 ?>

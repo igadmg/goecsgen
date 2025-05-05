@@ -58,7 +58,7 @@ func (c <?= t.Name ?>) Dto() <?= t.Name ?>Dto {
 	}
 }
 
-func (c <?= t.Name ?>) FromDto(dto <?= t.Name ?>Dto) <?= t.Name ?> {
+func (c *<?= t.Name ?>) FromDto(dto <?= t.Name ?>Dto) {
 <?
 	for f := range t.DtoComponentsSeq() {
 		if f.IsEcsRef() {
@@ -78,7 +78,6 @@ func (c <?= t.Name ?>) FromDto(dto <?= t.Name ?>Dto) <?= t.Name ?> {
 		}
 	}
 ?>
-	return c
 }
 <?
 }
