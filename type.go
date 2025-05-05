@@ -45,6 +45,7 @@ type EcsTypeI interface {
 	ComponentsSeq() iter.Seq[EcsFieldI]
 	AsComponentsSeq() iter.Seq[EcsFieldI]
 	SaveComponentsSeq() iter.Seq[EcsFieldI]
+	PackedComponentsSeq() iter.Seq[EcsFieldI]
 
 	ReversedStructComponentsSeq() iter.Seq[EcsFieldI]
 	ReversedQueryComponentsSeq() iter.Seq[EcsFieldI]
@@ -439,6 +440,20 @@ func (t *Type) DtoComponentsSeq() iter.Seq[EcsFieldI] {
 	return func(yield func(EcsFieldI) bool) {
 		for field := range EnumFieldsSeq(t.StructComponentsSeq()) {
 			if !field.Tag.HasField(Tag_Dto) {
+				continue
+			}
+
+			if !yield(field) {
+				return
+			}
+		}
+	}
+}
+
+func (t *Type) PackedComponentsSeq() iter.Seq[EcsFieldI] {
+	return func(yield func(EcsFieldI) bool) {
+		for field := range EnumFieldsSeq(t.StructComponentsSeq()) {
+			if !field.isEcsRef {
 				continue
 			}
 

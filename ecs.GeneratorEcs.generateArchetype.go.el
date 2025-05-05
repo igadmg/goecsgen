@@ -207,6 +207,28 @@ func (s storage_<?= eName ?>) Load(w *gob.Decoder) error {
 	return nil
 }
 
+func (s storage_<?= eName ?>) Pack() {
+	shift := 0
+	for i, id := range s.Ids {
+		if !id.IsAllocated() {
+			shift++
+		} else {
+			s.Ids[i-shift] = id
+<?
+	for c := range e.ComponentsSeq() {
+?>
+			s.S_<?= c.GetName() ?>[i-shift] = s.S_<?= c.GetName() ?>[i]
+			s.S_<?= c.GetName() ?>[i].Pack()
+<?
+	}
+?>
+		}
+	}
+
+	s.Ids = s.Ids[:len(s.Ids)-shift]
+	s.PackedIds()
+}
+
 <?
 	}
 
