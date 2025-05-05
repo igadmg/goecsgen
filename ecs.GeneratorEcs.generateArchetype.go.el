@@ -79,7 +79,7 @@ func (e <?= eName ?>) Allocate() ecs.Ref[<?= eName ?>] {
 <?
 	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
 ?>
-	s.S_<?= c.Name ?> = slicesex.Reserve(s.S_<?= c.Name ?>, index+1)
+	s.S_<?= c.Name ?> = ecs.BaseStorageReserve(s.S_<?= c.Name ?>, index+1)
 <?
 	}
 ?>
@@ -173,6 +173,29 @@ func (s storage_<?= eName ?>) Save(w *gob.Encoder) error {
 		if err != nil {
 			return err
 		}
+	}
+<?
+	}
+?>
+	return nil
+}
+
+func (s storage_<?= eName ?>) Load(w *gob.Decoder) error {
+<?
+	for c := range e.SaveComponentsSeq() {
+?>
+	{
+		var dto []<?= g.LocalTypeName(c.GetType()) ?>Dto
+		err := w.Decode(&dto)
+		if err != nil {
+			return err
+		}
+
+		s.S_<?= c.GetName() ?> = ecs.BaseStorageAppend(s.S_<?= c.GetName() ?>, slices.Collect(
+			xiter.Map(
+				slices.Values(dto),
+				func(dto <?= g.LocalTypeName(c.GetType()) ?>Dto) <?= g.LocalTypeName(c.GetType()) ?> { return <?= g.LocalTypeName(c.GetType()) ?>{}.FromDto(dto) },
+			)))
 	}
 <?
 	}

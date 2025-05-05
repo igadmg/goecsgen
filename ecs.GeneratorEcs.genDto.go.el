@@ -57,6 +57,29 @@ func (c <?= t.Name ?>) Dto() <?= t.Name ?>Dto {
 ?>
 	}
 }
+
+func (c <?= t.Name ?>) FromDto(dto <?= t.Name ?>Dto) <?= t.Name ?> {
+<?
+	for f := range t.DtoComponentsSeq() {
+		if f.IsEcsRef() {
+			if f.IsArray() {
+?>
+	c.<?= f.GetName() ?> = slicesex.Transform(dto.<?= f.GetName() ?>, ecs.MakeRef[<?= f.GetType().GetName() ?>])
+<?
+			} else {
+?>
+	c.<?= f.GetName() ?> = ecs.MakeRef[<?= f.GetType().GetName() ?>](dto.<?= f.GetName() ?>)
+<?
+			}
+		} else {
+?>
+	c.<?= f.GetName() ?> = dto.<?= f.GetName() ?>
+<?
+		}
+	}
+?>
+	return c
+}
 <?
 }
 ?>
