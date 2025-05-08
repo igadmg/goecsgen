@@ -129,10 +129,9 @@ func (e <?= eName ?>) Free() {
 	}
 ?>
 
-func Allocate<?= eName ?>() (ref ecs.Ref[<?= eName ?>], entity <?= eName ?>) {
+func Allocate<?= eName ?>() ecs.Ref[<?= eName ?>] {
 	var e <?= eName ?>
-	ref = e.Allocate()
-	return ref, ref.Ptr
+	return e.Allocate()
 }
 
 func Free<?= eName ?>(id ecs.Id) {
