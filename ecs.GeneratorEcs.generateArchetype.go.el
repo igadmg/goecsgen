@@ -195,7 +195,7 @@ func (s *storage_<?= eName ?>) Load(w *gob.Decoder) error {
 			return err
 		}
 
-		s.S_<?= c.GetName() ?> = ecs.BaseStorageReserve(s.S_<?= c.GetName() ?>, len(dto))
+		s.S_<?= c.GetName() ?> = ecs.BaseStorageAllocate(s.S_<?= c.GetName() ?>, len(dto))
 		for i := range s.S_<?= c.GetName() ?> {
 			s.S_<?= c.GetName() ?>[i].FromDto(dto[i])
 		}
