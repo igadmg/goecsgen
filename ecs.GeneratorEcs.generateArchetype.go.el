@@ -74,7 +74,7 @@ func (e <?= eName ?>) Get() <?= eName ?> {
 	return ref.Get()
 }
 
-func (e <?= eName ?>) Allocate() ecs.Ref[<?= eName ?>] {
+func (e <?= eName ?>) Allocate() <?= eName ?> {
 	s := &S_<?= eName ?>
 	age, id := s.BaseStorage.AllocateId()
 	index := (int)(id.GetId() - 1)
@@ -114,7 +114,7 @@ func (e <?= eName ?>) Allocate() ecs.Ref[<?= eName ?>] {
  	}
 ?>
 
-	return ref
+	return ref.Ptr
 }
 
 func (e <?= eName ?>) Free() {
@@ -128,11 +128,6 @@ func (e <?= eName ?>) Free() {
 		g.fnRestore(wr, e)
 	}
 ?>
-
-func Allocate<?= eName ?>() ecs.Ref[<?= eName ?>] {
-	var e <?= eName ?>
-	return e.Allocate()
-}
 
 func Free<?= eName ?>(id ecs.Id) {
 	s := &S_<?= eName ?>
