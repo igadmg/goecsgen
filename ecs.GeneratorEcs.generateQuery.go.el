@@ -70,7 +70,16 @@ func get<?= type_name ?>(id ecs.Id) (<?= local_name ?>, bool) {
 			if ft := iq.Type; ft != nil && ft.IsZero() {
 				continue
 			}
+
+			baseCast := ""
+			ef := e.GetFieldByName(iq.Name) // TODO: remove linkage by name consider linkage by type
+			if ef != nil {
+				if ef.GetType() != iq.Type {
+					baseCast = "." + iq.Type.GetName()
+				}
+			}
 ?>
+			// <?= baseCast ?>
 			<?= iq.Name ?>: &s.S_<?= iq.Name ?>[index],
 <?
 		}
@@ -113,7 +122,7 @@ func do<?= type_name ?>() iter.Seq[<?= local_name ?>] {
 				continue
 			}
 ?>
-			<?= iq.Name ?>: <?= iq.Access ?>s.S_<?= iq.Name ?>[index],
+			<?= iq.Name ?>: <?= iq.Access ?>s.S_<?= iq.Name ?>[index]<?= ?>,
 <?
 		}
 ?>

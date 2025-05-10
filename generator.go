@@ -237,6 +237,15 @@ func (g *GeneratorEcs) Prepare() {
 				continue
 			}
 
+			for bf := range ct.BasesSeq() {
+				bt, ok := CastType(bf.GetType())
+				if !ok {
+					continue
+				}
+
+				ec[bt] = struct{}{}
+			}
+
 			ec[ct] = struct{}{}
 		}
 		for _, q := range g.queries {
