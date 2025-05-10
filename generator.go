@@ -2,6 +2,7 @@ package goecsgen
 
 import (
 	"bytes"
+	"cmp"
 	"fmt"
 	"go/ast"
 	"iter"
@@ -287,7 +288,8 @@ func (g *GeneratorEcs) QueriesSeq() iter.Seq[QueriesSeqItem] {
 				continue
 			}
 
-			anyLocal := false
+			//anyLocal := false
+			anyLocal := len(es) == 0 // if es == 0 then all archs are local
 			archs := slices.Collect(
 				xiter.Filter(slices.Values(es), func(t *Type) bool {
 					if t.Package == g.Pkg {
@@ -378,4 +380,12 @@ func (g *GeneratorEcs) Graph() graph.Graph {
 	}
 
 	return r
+}
+
+func (g *GeneratorEcs) OrderQueryFields(fields iter.Seq[*Field]) iter.Seq[*Field] {
+	s := slices.Collect(fields)
+	slices.SortStableFunc(s, func(a, b *Field) int {
+		return cmp.Compare(a.Name, b.Name)
+	})
+	return slices.Values(s)
 }

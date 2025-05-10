@@ -142,6 +142,8 @@ func _Query_constraints(v bool) bool {
 ?>
 	}
 <?
+	ai := slices.IndexFunc(entitesByQueries, func(a QueriesSeqItem) bool { return a.Query.Name == "ColonyScreenLayoutQuery" })
+	_ = ai
 
 	for _, q := range entitesByQueries {
 		if !q.AnyLocal {

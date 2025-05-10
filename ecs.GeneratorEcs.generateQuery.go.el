@@ -116,7 +116,7 @@ func do<?= type_name ?>() iter.Seq[<?= local_name ?>] {
 		if !yield(<?= local_name ?>{
 			Id:       id,
 <?
-		for iq := range EnumFieldsSeq(q.StructComponentsSeq()) {
+		for iq := range g.OrderQueryFields(EnumFieldsSeq(q.StructComponentsSeq())) {
 			if ft := iq.Type; ft != nil && ft.IsZero() {
 				continue
 			}
