@@ -298,6 +298,9 @@ func (g *GeneratorEcs) QueriesSeq() iter.Seq[QueriesSeqItem] {
 					}
 					return g.Pkg.Above(t.Package)
 				}))
+			slices.SortStableFunc(archs, func(a, b *Type) int {
+				return cmp.Compare(a.Name, b.Name)
+			})
 
 			if q.GetPackage() != g.Pkg && len(archs) == 0 {
 				continue
@@ -380,12 +383,4 @@ func (g *GeneratorEcs) Graph() graph.Graph {
 	}
 
 	return r
-}
-
-func (g *GeneratorEcs) OrderQueryFields(fields iter.Seq[*Field]) iter.Seq[*Field] {
-	s := slices.Collect(fields)
-	slices.SortStableFunc(s, func(a, b *Field) int {
-		return cmp.Compare(a.Name, b.Name)
-	})
-	return slices.Values(s)
 }
