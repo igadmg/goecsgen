@@ -66,7 +66,7 @@ func get<?= type_name ?>(id ecs.Id) (<?= local_name ?>, bool) {
 		return <?= local_name ?>{
 			Id:      id,
 <?
-		for iq := range EnumFieldsSeq(q.StructComponentsSeq()) {
+		for iq := range g.OrderQueryFields(EnumFieldsSeq(q.StructComponentsSeq())) {
 			if ft := iq.Type; ft != nil && ft.IsZero() {
 				continue
 			}

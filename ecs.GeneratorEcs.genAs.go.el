@@ -79,6 +79,25 @@ func (e <?= t.Name ?>) Reset<?= af.GetA() ?>() {
 <?
 						}
 					}
+				// if af.IsEcsRef()
+				} else if aft, ok := af.GetEcsType(); ok && aft.GetEcsTag().GetEcsTag() == EcsQuery {
+					if !t.HasFunction(af.GetA()) {
+?>
+
+func (e <?= t.Name ?>) <?= af.GetA() ?>() <?= af.GetTypeName() ?> {
+	return e.<?= f.GetName() ?>.<?= af.GetName() ?>.Get()
+}
+<?
+					}
+
+					if !t.HasFunction("Set" + af.GetA()) {
+?>
+
+func (e <?= t.Name ?>) Set<?= af.GetA() ?>(v <?= af.GetTypeName() ?>) {
+	e.<?= f.GetName() ?>.<?= af.GetName() ?> = v
+}
+<?
+					}
 				} else {
 					if !t.HasFunction(af.GetA()) {
 ?>

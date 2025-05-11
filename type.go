@@ -381,7 +381,7 @@ func (t *Type) StoreComponentsSeq() iter.Seq[EcsFieldI] {
 				continue
 			}
 
-			if !field.GetEcsType().HasStore() {
+			if fet, ok := field.GetEcsType(); ok && !fet.HasStore() {
 				if field.Type.GetTag().IsEmpty() {
 					continue
 				}

@@ -28,6 +28,37 @@ type storage_<?= eName ?> struct {
 ?>
 }
 
+func (s storage_<?= eName ?>) Item(id ecs.Id) <?= eName ?> {
+	var e <?= eName ?>
+	e.Id = id
+
+	index := id.GetIndex()
+	_ = index
+<?
+	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
+		if ft := c.Type; ft != nil && ft.IsZero() {
+			continue
+		}
+?>
+	e.<?= c.Name ?> = &s.S_<?= c.Name ?>[index]
+<?
+ 	}
+
+	for c := range e.ComponentOverridesSeq() {
+?>
+	e.<?= c.Base.Name ?>.<?= c.Field.Name ?> = &e.<?= c.Field.Name ?>.<?= c.Field.GetTypeName() ?>
+<?
+	}
+?>
+
+	return e
+}
+
+func (s storage_<?= eName ?>) WithAny(id ecs.Id, do func(any)) {
+	i := s.Item(id)
+	do(i)
+}
+
 var S_<?= eName ?> = storage_<?= eName ?>{
 	BaseStorage: ecs.MakeBaseStorage(<?= id  ?>),
 }
@@ -287,6 +318,7 @@ func (g *GeneratorEcs) fnLoad(wr io.Writer, e *Type) {
 	eName := g.LocalTypeName(e)
 
 ?>
+
 func (e <?= eName ?>) Load(age uint64, id ecs.Id) (uint64, <?= eName ?>) {
 	index := (int)(id.GetId() - 1)
 	tid := id.GetType()
@@ -333,22 +365,7 @@ func (e <?= eName ?>) Load(age uint64, id ecs.Id) (uint64, <?= eName ?>) {
 ?>
 	if s := S_<?= eName ?>; s.TypeId() == tid {
 		if age != s.Age() {
-			e.Id = id
-<?
-	for c := range EnumFieldsSeq(e.StructComponentsSeq()) {
-		if ft := c.Type; ft != nil && ft.IsZero() {
-			continue
-		}
-?>
-			e.<?= c.Name ?> = &s.S_<?= c.Name ?>[index]
-<?
- 	}
-	for c := range e.ComponentOverridesSeq() {
-?>
-			e.<?= c.Base.Name ?>.<?= c.Field.Name ?> = &e.<?= c.Field.Name ?>.<?= c.Field.GetTypeName() ?>
-<?
-	}
-?>
+			e = S_<?= eName ?>.Item(id)
 			age = s.Age()
 		}
 

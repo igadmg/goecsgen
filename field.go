@@ -11,7 +11,7 @@ import (
 type EcsFieldI interface {
 	core.FieldI
 
-	GetEcsType() EcsTypeI
+	GetEcsType() (EcsTypeI, bool)
 
 	IsEcsRef() bool
 
@@ -25,8 +25,9 @@ type Field struct {
 	Access   string
 }
 
-func (f Field) GetEcsType() EcsTypeI {
-	return f.Type.(EcsTypeI)
+func (f Field) GetEcsType() (t EcsTypeI, ok bool) {
+	t, ok = f.Type.(EcsTypeI)
+	return
 }
 
 func (f Field) IsEcsRef() bool {
