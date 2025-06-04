@@ -138,15 +138,18 @@ func NewGeneratorEcs() core.Generator {
 	return g
 }
 
-func (g *GeneratorEcs) NewType(t core.TypeI, spec *ast.TypeSpec) (core.TypeI, error) {
+func (g *GeneratorEcs) NewType(pkg *core.Package, t core.TypeI, spec *ast.TypeSpec) (core.TypeI, error) {
 	if t == nil {
-		t = NewType(g.Pkg)
+		t = NewType(pkg)
+		defer func() {
+			g.Types[t.GetFullName()] = t
+		}()
 	}
 
 	switch et := t.(type) {
 	case *Type:
 		var err error
-		_, err = g.GeneratorBaseT.NewType(&et.Type, spec)
+		_, err = g.GeneratorBaseT.NewType(pkg, &et.Type, spec)
 		if err != nil {
 			return nil, err
 		}
