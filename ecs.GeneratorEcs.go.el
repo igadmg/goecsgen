@@ -36,6 +36,11 @@ import (
 ?>
 )
 
+func RegisterWorld() {
+	_Entity_constraints(false)
+	_Query_constraints(false)
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //// Systems for <?= len(g.systems) ?> types
@@ -54,8 +59,6 @@ import (
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //// Entities num <?= len(g.entities) ?>
 ///
-
-var _ bool = _Entity_constraints(false)
 
 func _Entity_constraints(v bool) bool {
 	if !v {
@@ -124,8 +127,6 @@ func _Entity_constraints(v bool) bool {
 //// Queries num <?= len(entitesByQueries) ?>
 ///
 
-var _ bool = _Query_constraints(false)
-
 func _Query_constraints(v bool) bool {
 	if v {
 <?
@@ -175,14 +176,6 @@ func _Query_constraints(v bool) bool {
 func _<?= type_name ?>_constraints() {
 	var _ ecs.Id = <?= local_name ?>{}.Id
 }
-
-type _<?= type_name ?>Type struct {
-	Age func() (age uint64)
-	Get func(id ecs.Id) (<?= type_name ?>, bool)
-	Do  func() iter.Seq[<?= type_name ?>]
-}
-
-var <?= type_name ?>Type _<?= type_name ?>Type
 
 func (e <?= type_name ?>) Get() <?= type_name ?> {
 	r, _ := <?= type_name ?>Type.Get(e.Id)

@@ -14,16 +14,31 @@ func (g *GeneratorEcs) generateQuery(wr io.Writer, qsi QueriesSeqItem) {
 	type_name := strings.ReplaceAll(local_name, ".", "_")
 
 	g.genAs(wr, q)
+?>
 
+type _<?= type_name ?>Type struct {	
+}
+<?
+
+	if q.Package == g.Pkg {
+?>
+
+type <?= type_name ?>TypeI interface {
+	Age() (age uint64)
+	Get(id ecs.Id) (<?= type_name ?>, bool)
+	Do() iter.Seq[<?= type_name ?>]
+}
+
+var <?= type_name ?>Type <?= type_name ?>TypeI = _<?= type_name ?>Type{}
+<?
+	}
 ?>
 
 func _<?= type_name ?>_register() {
-	<?= local_name ?>Type.Age = age<?= type_name ?>
-	<?= local_name ?>Type.Get = get<?= type_name ?>
-	<?= local_name ?>Type.Do = do<?= type_name ?>
+	<?= local_name ?>Type = _<?= type_name ?>Type{}
 }
 
-func age<?= type_name ?>() (age uint64) {
+func (_<?= type_name ?>Type) Age() (age uint64) {
 	age = 0
 <?
 	for _, e := range qsi.Archs {
@@ -41,7 +56,7 @@ func age<?= type_name ?>() (age uint64) {
 	return
 }
 
-func get<?= type_name ?>(id ecs.Id) (<?= local_name ?>, bool) {
+func (_<?= type_name ?>Type) Get(id ecs.Id) (<?= local_name ?>, bool) {
 	t := id.GetType()
 	index := (int)(id.GetId() - 1)
 	_ = index
@@ -94,7 +109,7 @@ func get<?= type_name ?>(id ecs.Id) (<?= local_name ?>, bool) {
 	return <?= local_name ?>{}, false
 }
 
-func do<?= type_name ?>() iter.Seq[<?= local_name ?>] {
+func (_<?= type_name ?>Type) Do() iter.Seq[<?= local_name ?>] {
 	return func(yield func(<?= local_name ?>) bool) {
 <?
 	for _, e := range qsi.Archs {
@@ -152,21 +167,26 @@ func do<?= type_name ?>() iter.Seq[<?= local_name ?>] {
 	if qt, ok := q.Tag.GetObject(Tag_Query); ok && qt.HasField(Tag_Static) {
 ?>
 
-type _<?= q.Name ?>StaticType struct {
-	Age func() (age uint64)
-	Get func(id ecs.Id) (<?= q.Name ?>, bool)
-	Do  func() iter.Seq[<?= q.Name ?>]
+type _Static<?= type_name ?>Type struct {	
+}
+<?
+		if q.Package == g.Pkg {
+?>
+
+type Static<?= type_name ?>TypeI interface {
+	Do() iter.Seq[<?= type_name ?>]
 }
 
-var <?= q.Name ?>StaticType _<?= q.Name ?>StaticType
+var Static<?= type_name ?>Type Static<?= type_name ?>TypeI = _Static<?= type_name ?>Type{}
+<?
+		}
+?>
 
 func _<?= local_name ?>Static_register() {
-	<?= local_name ?>StaticType.Age = age<?= local_name ?>
-	<?= local_name ?>StaticType.Get = get<?= local_name ?>
-	<?= local_name ?>StaticType.Do = do<?= local_name ?>Static
+	Static<?= type_name ?>Type = _Static<?= type_name ?>Type{}
 }
 
-func do<?= type_name ?>Static() iter.Seq[<?= local_name ?>] {
+func (_Static<?= type_name ?>Type) Do() iter.Seq[<?= local_name ?>] {
 	return func(yield func(<?= local_name ?>) bool) {
 <?
 	for _, e := range qsi.Archs {

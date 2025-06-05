@@ -287,7 +287,7 @@ type QueriesSeqItem struct {
 func (g *GeneratorEcs) QueriesSeq() iter.Seq[QueriesSeqItem] {
 	return func(yield func(QueriesSeqItem) bool) {
 		for q, es := range g.EntitesByQueries {
-			if q.GetPackage() != g.Pkg && !g.Pkg.Above(q.GetPackage()) {
+			if q.GetPackage() != g.Pkg && q.GetPackage().Above(g.Pkg) {
 				continue
 			}
 
