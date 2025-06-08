@@ -287,7 +287,7 @@ type QueriesSeqItem struct {
 func (g *GeneratorEcs) QueriesSeq() iter.Seq[QueriesSeqItem] {
 	return func(yield func(QueriesSeqItem) bool) {
 		for q, es := range g.EntitesByQueries {
-			if q.GetPackage() != g.Pkg && q.GetPackage().Above(g.Pkg) {
+			if q.GetPackage() != g.Pkg && !g.Pkg.HasImport(q.GetPackage()) {
 				continue
 			}
 
@@ -299,7 +299,7 @@ func (g *GeneratorEcs) QueriesSeq() iter.Seq[QueriesSeqItem] {
 						anyLocal = true
 						return true
 					}
-					return g.Pkg.Above(t.Package)
+					return g.Pkg.HasImport(t.Package)
 				}))
 			slices.SortStableFunc(archs, func(a, b *Type) int {
 				return cmp.Compare(a.Name, b.Name)

@@ -26,7 +26,7 @@ import (
 	"github.com/igadmg/gamemath/vector2"
 <?
 	for _, p := range g.Pkgs {
-		if p.Above(g.Pkg) {
+		if !g.Pkg.HasImport(p) {
 			continue
 		}
 ?>
@@ -37,6 +37,11 @@ import (
 )
 
 func RegisterWorld() {
+	_Entity_constraints(false)
+	_Query_constraints(false)
+}
+
+func Register() {
 	_Entity_constraints(false)
 	_Query_constraints(false)
 }

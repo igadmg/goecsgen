@@ -16,7 +16,7 @@ func (g *GeneratorEcs) generateQuery(wr io.Writer, qsi QueriesSeqItem) {
 	g.genAs(wr, q)
 ?>
 
-type _<?= type_name ?>Type struct {	
+type _<?= type_name ?>Type struct {
 }
 <?
 
@@ -46,7 +46,7 @@ func (_<?= type_name ?>Type) Age() (age uint64) {
 ?>
 	age += S_<?= e.Name ?>.Age()
 <?
-		} else if g.Pkg.Above(e.GetPackage()) {
+		} else if g.Pkg.HasImport(e.GetPackage()) {
 ?>
 	age += <?= e.GetPackage().Name ?>.S_<?= e.Name ?>.Age()
 <?
@@ -70,7 +70,7 @@ func (_<?= type_name ?>Type) Get(id ecs.Id) (<?= local_name ?>, bool) {
 ?>
 	if s := &S_<?= e.Name ?>; s.TypeId() == t {
 <?
-		} else if g.Pkg.Above(e.GetPackage()) {
+		} else if g.Pkg.HasImport(e.GetPackage()) {
 ?>
 	if s := &<?= e.GetPackage().Name ?>.S_<?= e.Name ?>; s.TypeId() == t {
 <?
@@ -118,7 +118,7 @@ func (_<?= type_name ?>Type) Do() iter.Seq[<?= local_name ?>] {
 	{
 		s := &S_<?= e.Name ?>
 <?
-		} else if g.Pkg.Above(e.GetPackage()) {
+		} else if g.Pkg.HasImport(e.GetPackage()) {
 ?>
 	{
 		s := &<?= e.GetPackage().Name ?>.S_<?= e.Name ?>
@@ -167,7 +167,7 @@ func (_<?= type_name ?>Type) Do() iter.Seq[<?= local_name ?>] {
 	if qt, ok := q.Tag.GetObject(Tag_Query); ok && qt.HasField(Tag_Static) {
 ?>
 
-type _Static<?= type_name ?>Type struct {	
+type _Static<?= type_name ?>Type struct {
 }
 <?
 		if q.Package == g.Pkg {
@@ -195,7 +195,7 @@ func (_Static<?= type_name ?>Type) Do() iter.Seq[<?= local_name ?>] {
 	{
 		s := &S_<?= e.Name ?>
 <?
-		} else if g.Pkg.Above(e.GetPackage()) {
+		} else if g.Pkg.HasImport(e.GetPackage()) {
 ?>
 	{
 		s := &<?= e.GetPackage().Name ?>.S_<?= e.Name ?>
