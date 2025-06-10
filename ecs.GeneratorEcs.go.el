@@ -25,18 +25,26 @@ import (
 	"github.com/igadmg/goex/slicesex"
 	"github.com/igadmg/gamemath/vector2"
 <?
-	for _, p := range g.Pkgs {
-		if !g.Pkg.HasImport(p) {
-			continue
-		}
+	for _, p := range g.Pkg.ImportedPkgs {
 ?>
-	"<?= p.Pkg.PkgPath ?>"
+	<?= p.Name ?> "<?= p.Pkg.PkgPath ?>"
 <?
 	}
 ?>
 )
 
+//type EcsWorld struct {
+//
+//}
+
 func RegisterWorld() {
+<?
+	for _, p := range g.Pkg.ImportedPkgs {
+?>
+	<?= p.Name ?>.Register()
+<?
+	}
+?>
 	_Entity_constraints(false)
 	_Query_constraints(false)
 }
