@@ -167,26 +167,26 @@ func (_<?= type_name ?>Type) Do() iter.Seq[<?= local_name ?>] {
 	if qt, ok := q.Tag.GetObject(Tag_Query); ok && qt.HasField(Tag_Static) {
 ?>
 
-type _Static<?= type_name ?>Type struct {
+type _<?= type_name ?>StaticType struct {
 }
 <?
 		if q.Package == g.Pkg {
 ?>
 
-type Static<?= type_name ?>TypeI interface {
+type <?= type_name ?>StaticTypeI interface {
 	Do() iter.Seq[<?= type_name ?>]
 }
 
-var Static<?= type_name ?>Type Static<?= type_name ?>TypeI = _Static<?= type_name ?>Type{}
+var <?= type_name ?>StaticType <?= type_name ?>StaticTypeI = _<?= type_name ?>StaticType{}
 <?
 		}
 ?>
 
-func _<?= local_name ?>Static_register() {
-	Static<?= type_name ?>Type = _Static<?= type_name ?>Type{}
+func _<?= type_name ?>Static_register() {
+	<?= local_name ?>StaticType = _<?= type_name ?>StaticType{}
 }
 
-func (_Static<?= type_name ?>Type) Do() iter.Seq[<?= local_name ?>] {
+func (_<?= type_name ?>StaticType) Do() iter.Seq[<?= local_name ?>] {
 	return func(yield func(<?= local_name ?>) bool) {
 <?
 	for _, e := range qsi.Archs {
