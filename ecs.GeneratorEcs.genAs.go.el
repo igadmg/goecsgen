@@ -42,6 +42,15 @@ func (e <?= t.Name ?>) Set<?= af.GetA() ?>(i int, v <?= af.GetTypeName() ?>) {
 }
 <?
 						}
+
+						if !t.HasFunction("Reset" + af.GetA()) {
+?>
+
+func (e <?= t.Name ?>) Reset<?= af.GetA() ?>(v []<?= af.GetTypeName() ?>) {
+	e.<?= f.GetName() ?>.<?= af.GetName() ?> = v
+}
+<?
+						}
 					} else {
 						if !t.HasFunction(af.GetA()) {
 ?>
@@ -81,6 +90,7 @@ func (e <?= t.Name ?>) Reset<?= af.GetA() ?>() {
 					}
 				// if af.IsEcsRef()
 				} else if aft, ok := af.GetEcsType(); ok && aft.GetEcsTag().GetEcsTag() == EcsQuery {
+					// only for queries generate
 					if !t.HasFunction(af.GetA()) {
 ?>
 
@@ -99,22 +109,52 @@ func (e <?= t.Name ?>) Set<?= af.GetA() ?>(v <?= af.GetTypeName() ?>) {
 <?
 					}
 				} else {
-					if !t.HasFunction(af.GetA()) {
+					// simple fields generate
+					if af.IsArray() {
+						if !t.HasFunction(af.GetA()) {
+?>
+
+func (e <?= t.Name ?>) <?= af.GetA() ?>(i int) <?= af.GetTypeName() ?> {
+	return e.<?= f.GetName() ?>.<?= af.GetName() ?>[i]
+}
+<?
+						}
+
+						if !t.HasFunction("Set" + af.GetA()) {
+?>
+
+func (e <?= t.Name ?>) Set<?= af.GetA() ?>(i int, v <?= af.GetTypeName() ?>) {
+	e.<?= f.GetName() ?>.<?= af.GetName() ?>[i] = v
+}
+<?
+						}
+
+						if !t.HasFunction("Reset" + af.GetA()) {
+?>
+
+func (e <?= t.Name ?>) Reset<?= af.GetA() ?>(v []<?= af.GetTypeName() ?>) {
+	e.<?= f.GetName() ?>.<?= af.GetName() ?> = v
+}
+<?
+						}
+					} else {
+						if !t.HasFunction(af.GetA()) {
 ?>
 
 func (e <?= t.Name ?>) <?= af.GetA() ?>() <?= af.GetTypeName() ?> {
 	return e.<?= f.GetName() ?>.<?= af.GetName() ?>
 }
 <?
-					}
+						}
 
-					if !t.HasFunction("Set" + af.GetA()) {
+						if !t.HasFunction("Set" + af.GetA()) {
 ?>
 
 func (e <?= t.Name ?>) Set<?= af.GetA() ?>(v <?= af.GetTypeName() ?>) {
 	e.<?= f.GetName() ?>.<?= af.GetName() ?> = v
 }
 <?
+						}
 					}
 				}
 			}
